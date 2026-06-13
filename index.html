@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Repartidor — Panel de Entregas en Tiempo Real</title>
+  <meta name="description" content="Panel de despacho y seguimiento de pedidos en tiempo real para repartidores de la plataforma Nexus AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#0b0f19">
+</head>
+<body>
+
+  <!-- BACKGROUND DECORATIONS -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-logo">
+        <i class="bx bx-cycling" style="font-size:1.8rem;color:var(--color-info);"></i>
+        <div class="logo-text">
+          <h1>NEXUS <span class="accent-text">DELIVERY</span></h1>
+          <p>Panel de Entregas en Tiempo Real</p>
+        </div>
+      </div>
+
+      <!-- Live Stats -->
+      <div class="header-stats" id="header-stats" style="display:none;">
+        <div class="hstat">
+          <div class="hstat-val text-warning" id="stat-pending">0</div>
+          <div class="hstat-label">Pendientes</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-val text-info" id="stat-transit">0</div>
+          <div class="hstat-label">En Ruta</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-val text-success" id="stat-completed">0</div>
+          <div class="hstat-label">Entregados</div>
+        </div>
+      </div>
+
+      <!-- Session -->
+      <div class="header-session" id="header-session" style="display:none;">
+        <div>
+          <div class="s-name" id="session-name">—</div>
+          <div class="s-role" id="session-role">—</div>
+        </div>
+        <button class="btn-logout" id="btn-logout"><i class="bx bx-log-out"></i></button>
+      </div>
+    </header>
+
+    <!-- BUSINESS FILTER (for multi-restaurant drivers or super-admin) -->
+    <div class="biz-filter-bar" id="biz-filter-bar" style="display:none;">
+      <label for="biz-filter-select"><i class="bx bx-store"></i> Negocio:</label>
+      <select id="biz-filter-select" class="form-control" style="max-width:260px;"></select>
+    </div>
+
+    <!-- DELIVERY BOARD -->
+    <main class="app-content">
+      <div class="delivery-board">
+
+        <!-- COLUMN 1: Pending / Cooking -->
+        <div class="delivery-col">
+          <div class="col-header col-pending">
+            <i class="bx bx-package text-warning"></i>
+            <span>Por Recoger / Cocinando</span>
+            <span class="col-count" id="count-pending">0</span>
+          </div>
+          <div class="col-body" id="col-pending">
+            <div class="empty-state"><i class="bx bx-time-five"></i><p>Sin pedidos pendientes</p></div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: In Transit -->
+        <div class="delivery-col">
+          <div class="col-header col-transit">
+            <i class="bx bx-map-pin text-info"></i>
+            <span>En Ruta / Reparto</span>
+            <span class="col-count" id="count-transit">0</span>
+          </div>
+          <div class="col-body" id="col-transit">
+            <div class="empty-state"><i class="bx bx-cycling"></i><p>Sin repartos en curso</p></div>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: Completed -->
+        <div class="delivery-col">
+          <div class="col-header col-completed">
+            <i class="bx bx-check-circle text-success"></i>
+            <span>Entregados Hoy</span>
+            <span class="col-count" id="count-completed">0</span>
+          </div>
+          <div class="col-body" id="col-completed">
+            <div class="empty-state"><i class="bx bx-trophy"></i><p>Las entregas completadas aparecerán aquí</p></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div><!-- /app-container -->
+
+  <!-- ======== MODAL: LOGIN ======== -->
+  <div class="modal-overlay active" id="modal-login">
+    <div class="glass-card modal-card animate-slide-up">
+      <div style="margin-bottom: 20px;">
+        <i class="bx bx-cycling" style="font-size: 3.5rem; color: var(--color-info); text-shadow: 0 0 20px var(--color-info-glow); display:block; margin-bottom: 10px;"></i>
+        <h2 style="font-size: 1.5rem; margin-bottom: 4px;">NEXUS <span style="color:var(--color-info);">REPARTIDOR</span></h2>
+        <p style="color: var(--text-muted); font-size: 0.83rem;">Ingresa tus credenciales para continuar</p>
+      </div>
+
+      <form id="form-login">
+        <div class="form-group">
+          <label for="login-email">Correo Electrónico</label>
+          <input type="email" id="login-email" class="form-control" style="width:100%;" placeholder="tu@correo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Contraseña</label>
+          <div class="input-with-icon">
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+            <button type="button" class="input-eye-btn" id="btn-toggle-pass"><i class="bx bx-show"></i></button>
+          </div>
+        </div>
+        <div class="error-msg" id="login-error-msg"></div>
+        <button type="submit" class="primary-btn btn-info" style="width:100%; justify-content:center; margin-top:8px;">
+          <i class="bx bx-log-in-circle"></i> Iniciar Sesión
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
